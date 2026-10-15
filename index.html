@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Claude で開く</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 3rem auto; max-width: 32rem; padding: 0 1rem; color: #222; background: #fff; }
+  @media (prefers-color-scheme: dark) { body { color: #ddd; background: #1e1e1e; } a { color: #8ab4f8; } }
+  code { word-break: break-all; }
+</style>
+</head>
+<body>
+<p id="msg">Claude デスクトップアプリでセッションを開いています…</p>
+<p id="fallback" hidden>開かない場合は <a id="link" href="#">こちら</a> をクリックしてください。</p>
+<script>
+  // Notion などは claude:// のリンクを保持できないため、https のこのページを経由して転送する。
+  // 任意の URL へ飛ばす踏み台にならないよう、Code タブのセッション ID の形だけを受け付ける。
+  var id = location.hash.slice(1);
+  if (/^local_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) {
+    var url = "claude://claude.ai/epitaxy/" + id;
+    document.getElementById("link").href = url;
+    document.getElementById("fallback").hidden = false;
+    location.href = url;
+  } else {
+    document.getElementById("msg").textContent = "セッション ID が指定されていないか、形式が正しくありません。";
+  }
+</script>
+</body>
+</html>
