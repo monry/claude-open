@@ -15,6 +15,7 @@
 <body>
 <p id="msg">Claude デスクトップアプリでセッションを開いています…</p>
 <p id="fallback" hidden>開かない場合は <a id="link" href="#">こちら</a> をクリックしてください。</p>
+<p><button type="button" onclick="window.close()">このタブを閉じる</button></p>
 <script>
   // Notion などは claude:// のリンクを保持できないため、https のこのページを経由して転送する。
   // 任意の URL へ飛ばす踏み台にならないよう、Code タブのセッション ID の形だけを受け付ける。
@@ -23,6 +24,12 @@
     var url = "claude://claude.ai/epitaxy/" + id;
     document.getElementById("link").href = url;
     document.getElementById("fallback").hidden = false;
+    // 確認ダイアログ（Claude を開きますか？）が出ただけで blur は発火し、そこで閉じると転送が取り消されるため、
+    // タブが隠れたとき（visibilitychange の hidden）だけ自動で閉じ、それ以外は「閉じる」ボタンに任せる。
+    // リンクから新しいタブで開かれた（履歴が 1 件の）タブはスクリプトから閉じられる
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") setTimeout(function () { window.close(); }, 300);
+    }, { once: true });
     location.href = url;
   } else {
     document.getElementById("msg").textContent = "セッション ID が指定されていないか、形式が正しくありません。";
